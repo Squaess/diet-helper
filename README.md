@@ -1,5 +1,11 @@
 ## sbt project compiled with Scala 3
 
+## TODO
+
+* parsing json in http server
+* error handling - not found responses 
+* get all command?
+
 ### Usage
 
 This is a normal sbt project. You can compile code with `sbt compile`, run it with `sbt run`, and `sbt console` will start a Scala 3 REPL.
