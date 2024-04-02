@@ -6,6 +6,7 @@ import io.circe.syntax._
 import org.http4s.HttpRoutes
 import org.http4s.dsl.Http4sDsl
 import services.RedisOperations
+import org.http4s.circe.CirceEntityDecoder._
 
 object Routes {
 
@@ -16,14 +17,23 @@ object Routes {
     import dsl._
 
     HttpRoutes.of[IO] {
-      case GET -> Root / "get" / name =>
+      case GET -> Root / "product" =>
         for {
-          product <- redisOperation.get[domain.Product](s"product:$name")
+          keys <- redisOperation.list("product:*")
+          res <- Ok(keys.asJson.noSpaces)
+        } yield res
+      case GET -> Root / "product" / name =>
+        for {
+          product <- redisOperation.get[domain.Product](domain.Product(name).id)
           res <- Ok(product.get.asJson.noSpaces)
         } yield res
-      case GET -> Root / "del" / name =>
-        redisOperation.deleteById(name) >> Ok()
-      case POST -> Root / "product" / name =>
-        redisOperation.save(domain.Product(name)) >> Ok()
+      case DELETE -> Root / "product" / name =>
+        redisOperation.delete(domain.Product(name).id) >> Ok()
+      case req @ POST -> Root / "product" =>
+        for {
+          product <- req.as[domain.Product]
+          _ <- redisOperation.save(product)
+          res <- Ok()
+        } yield res
     }
 }

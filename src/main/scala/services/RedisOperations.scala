@@ -14,12 +14,17 @@ import org.typelevel.log4cats.syntax._
 import io.circe.Encoder
 import io.circe.Decoder
 import io.circe.parser.decode
+import dev.profunktor.redis4cats.effects.ScanArgs
 
 trait RedisOperations {
 
   def save[A <: RedisDocument: Encoder](product: A): IO[Unit]
 
   def get[A <: RedisDocument: Decoder](id: String): IO[Option[A]]
+
+  def delete(id: String): IO[Long]
+
+  def list(pattern: String): IO[List[String]]
 }
 
 object RedisOperations {
@@ -34,7 +39,7 @@ object RedisOperations {
 
     override def save[A <: RedisDocument: Encoder](obj: A): IO[Unit] =
       redisResource.use { redis =>
-        redis.set(s"${obj.table}:${obj.id}", obj.asJson.noSpaces)
+        redis.set(obj.id, obj.asJson.noSpaces)
       }
 
     override def get[A <: RedisDocument: Decoder](
@@ -46,13 +51,25 @@ object RedisOperations {
         } yield strValue.flatMap(decode[A](_).toOption)
       }
 
-    def deleteById(
+    override def delete(
         id: String
-    ): IO[Unit] =
+    ): IO[Long] =
       redisResource.use { redis =>
-        redis.del(id).void.flatTap(_ => info"Deleted $id")
+        redis
+          .del(id)
+          .flatTap(_ => info"Deleted $id")
       }
 
+    override def list(pattern: String): IO[List[String]] = {
+      val args = ScanArgs(pattern)
+      redisResource
+        .use { redis =>
+          redis.scan(args).map(crs => crs.keys)
+        }
+        .map { keys =>
+          keys.map(x => x.replace(pattern.slice(0, pattern.size - 1), ""))
+        }
+    }
   }
 
 }

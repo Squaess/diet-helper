@@ -4,7 +4,10 @@
 
 * parsing json in http server
 * error handling - not found responses 
-* get all command?
+* get all command (scan command or keys?)
+* unit-tests
+* redis persistance between shutdown 
+* split routes into domain entities - for each we should have create, update, delete, list/show all, and get
 
 ### Usage
 
