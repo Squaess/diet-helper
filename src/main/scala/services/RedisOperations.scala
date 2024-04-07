@@ -6,15 +6,15 @@ import dev.profunktor.redis4cats.Redis
 import dev.profunktor.redis4cats.connection.RedisClient
 import dev.profunktor.redis4cats.data.RedisCodec
 import dev.profunktor.redis4cats.effect.Log.Stdout.given
+import dev.profunktor.redis4cats.effects.ScanArgs
 import domain.RedisDocument
+import io.circe.Decoder
+import io.circe.Encoder
+import io.circe.parser.decode
 import io.circe.syntax._
 import org.typelevel.log4cats.Logger
 import org.typelevel.log4cats.slf4j.Slf4jLogger
 import org.typelevel.log4cats.syntax._
-import io.circe.Encoder
-import io.circe.Decoder
-import io.circe.parser.decode
-import dev.profunktor.redis4cats.effects.ScanArgs
 
 trait RedisOperations {
 
@@ -39,21 +39,17 @@ object RedisOperations {
 
     override def save[A <: RedisDocument: Encoder](obj: A): IO[Unit] =
       redisResource.use { redis =>
-        redis.set(obj.id, obj.asJson.noSpaces)
+        redis.set(obj.id, obj.asJson.noSpaces).flatTap(_ => info"saved $obj.id")
       }
 
-    override def get[A <: RedisDocument: Decoder](
-        id: String
-    ): IO[Option[A]] =
+    override def get[A <: RedisDocument: Decoder](id: String): IO[Option[A]] =
       redisResource.use { redis =>
         for {
           strValue <- redis.get(id).flatTap(_ => info"Getting $id")
         } yield strValue.flatMap(decode[A](_).toOption)
       }
 
-    override def delete(
-        id: String
-    ): IO[Long] =
+    override def delete(id: String): IO[Long] =
       redisResource.use { redis =>
         redis
           .del(id)

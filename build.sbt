@@ -1,6 +1,7 @@
 val scala3Version = "3.4.0"
 val redis4catsVersion = "1.6.0"
-val http4sVersion = "0.23.26"
+val catsVersion = "3.5.4"
+val http4sVersion = "1.0.0-M40"
 val circeVersion = "0.14.1"
 
 lazy val root = project
@@ -11,7 +12,7 @@ lazy val root = project
     scalaVersion := scala3Version,
     libraryDependencies += "org.scalameta" %% "munit" % "0.7.29" % Test,
     libraryDependencies += "dev.profunktor" %% "redis4cats-effects" % redis4catsVersion,
-    libraryDependencies += "org.typelevel" %% "cats-effect" % "3.5.4",
+    libraryDependencies += "org.typelevel" %% "cats-effect" % catsVersion,
     libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.5.3",
     libraryDependencies ++= Seq(
       "org.typelevel" %% "log4cats-slf4j" % "2.6.0" // Direct Slf4j Support - Recommended

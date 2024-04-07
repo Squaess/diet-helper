@@ -1,24 +1,20 @@
 import cats.effect.*
-import cats.implicits._
-import org.typelevel.log4cats.Logger
-import org.typelevel.log4cats.slf4j.Slf4jLogger
 import com.comcast.ip4s._
 import org.http4s.ember.server._
-
-import services.RedisOperations
+import org.http4s.server.Router
+import org.typelevel.log4cats.slf4j.loggerFactoryforSync
 import server.Routes
 
 object Main extends IOApp.Simple:
 
-  lazy val redisOperation = RedisOperations.Impl
-  // Impure But What 90% of Folks I know do with log4s
-  implicit def logger[F[_]: Sync]: Logger[F] = Slf4jLogger.getLogger[F]
+  val httpApp =
+    Router("/product" -> Routes.product, "/recipe" -> Routes.recipe).orNotFound
 
   val server = EmberServerBuilder
     .default[IO]
     .withHost(ipv4"0.0.0.0")
     .withPort(port"8080")
-    .withHttpApp(Routes.routes.orNotFound)
+    .withHttpApp(httpApp)
     .build
 
   override def run: IO[Unit] =
