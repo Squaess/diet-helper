@@ -1,6 +1,6 @@
 package domain
 
-enum ListCategory(value: String):
-  case Fridge extends ListCategory("fridge")
-  case Others extends ListCategory("others")
-  case Vegetables extends ListCategory("vegetables")
+sealed trait ListCategory(value: String)
+case object Fridge extends ListCategory("fridge")
+case object Others extends ListCategory("others")
+case object Vegetables extends ListCategory("vegetables")
