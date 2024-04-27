@@ -8,7 +8,11 @@ import server.Routes
 object Main extends IOApp.Simple:
 
   val httpApp =
-    Router("/product" -> Routes.product, "/recipe" -> Routes.recipe).orNotFound
+    Router(
+      "/product" -> Routes.product,
+      "/recipe" -> Routes.recipe,
+      "/diet" -> Routes.diet
+    ).orNotFound
 
   val server = EmberServerBuilder
     .default[IO]

@@ -10,6 +10,8 @@ final case class RecipeProduct(product: Product, quantity: Double) {
   }
 }
 
+final case class RecipeProductDSL(name: String, quantity: Double)
+
 // Disable for now, implement later as a feature
 // final case class Quantity(si: Si) {
 //   def +(that: Quantity): Quantity = {

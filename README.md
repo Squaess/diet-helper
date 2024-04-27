@@ -2,7 +2,6 @@
 
 ## TODO
 
-* parsing json in http server
 * error handling - not found responses 
 * unit-tests
 * why i see always 404? cors / cross s????

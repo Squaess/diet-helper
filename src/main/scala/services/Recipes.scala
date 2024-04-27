@@ -11,31 +11,55 @@ import domain.RecipeProduct
 import domain.Fridge
 import domain.Others
 import domain.Vegetables
+import domain.RecipeDSL
 
 object Recipes {
 
   val redisOperation = RedisOperations.Impl
 
-  def getRecipe(name: String) = ???
-
-  def saveRecipe(recipe: Recipe) = for {
-    allSaved <- checkProducts(recipe)
-    _ <- if (allSaved) then redisOperation.save[Recipe](recipe) else IO.unit
+  def saveRecipe(recipeDSL: RecipeDSL) = for {
+    recipe <- checkProducts(recipeDSL)
+    _ <- redisOperation.save[Recipe](recipe)
   } yield ()
 
-  private def checkProducts(recipe: Recipe): IO[Boolean] = {
+  def getRecipes(ids: Vector[String]): IO[Vector[Recipe]] = ids
+    .map { recipe =>
+      redisOperation.get[Recipe](Recipe.id(recipe))
+    }
+    .sequence
+    .map { maybeRecipe =>
+      if (maybeRecipe.exists(_.isEmpty)) {
+        Vector.empty[Recipe]
+      } else {
+        maybeRecipe.map(_.get)
+      }
+    }
+
+  private def checkProducts(recipe: RecipeDSL): IO[Recipe] = {
     for {
       res <- recipe.products
-        .map(prod => redisOperation.get[domain.Product](prod.product.id))
+        .map(prod =>
+          redisOperation.get[domain.Product](domain.Product.id(prod.name))
+        )
         .sequence
-    } yield res
-      .map(_.isDefined)
-      .map(x =>
-        if !x then IO.println("Not in db")
-        x
-      )
-      .reduce(_ && _)
+      shouldFail = res.exists(_.isEmpty)
+    } yield
+      if (shouldFail) throw new RuntimeException("blah")
+      else
+        Recipe(
+          recipe.name,
+          res.zip(recipe.products).map { case (prod, prodDsl) =>
+            RecipeProduct(prod.get, prodDsl.quantity)
+          },
+          recipe.calories,
+          recipe.description
+        )
   }
+
+  def multiplyRecipe(recipe: Recipe, factor: Double): Recipe =
+    recipe.copy(products =
+      recipe.products.map(p => p.copy(p.product, p.quantity * factor))
+    )
 
   def createShoppingList(recipes: Vector[Recipe]): ShoppingList = {
     val fridgeProducts =

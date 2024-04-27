@@ -5,6 +5,7 @@ import scala.reflect.ClassTag
 final case class Recipe(
     name: String,
     products: Vector[RecipeProduct],
+    calories: Double,
     description: String
 ) extends RedisDocument {
 
@@ -28,3 +29,10 @@ object Recipe {
         case _    => false
     )
 }
+
+final case class RecipeDSL(
+    name: String,
+    products: Vector[RecipeProductDSL],
+    calories: Double,
+    description: String
+)

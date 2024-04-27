@@ -54,6 +54,7 @@ class RecipesTest extends munit.FunSuite {
         RecipeProduct(products("prod2"), 2),
         RecipeProduct(products("prod3"), 3)
       ),
+      calories = 12,
       description = ""
     ),
     Recipe(
@@ -63,6 +64,7 @@ class RecipesTest extends munit.FunSuite {
         RecipeProduct(products("prod3"), 2),
         RecipeProduct(products("prod4"), 3)
       ),
+      calories = 12,
       description = ""
     ),
     Recipe(
@@ -72,6 +74,7 @@ class RecipesTest extends munit.FunSuite {
         RecipeProduct(products("prod4"), 2),
         RecipeProduct(products("prod5"), 3)
       ),
+      calories = 12,
       description = ""
     )
   )

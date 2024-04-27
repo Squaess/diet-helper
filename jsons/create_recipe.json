@@ -1,0 +1,27 @@
+{
+  "name": "Makaron z Owocami2",
+  "products": [
+    {
+      "name": "Ola",
+      "quantity": 10.0
+    },
+    {
+      "name": "Nie ma",
+      "quantity": 150
+    },
+    {
+      "name": "Skyr Waniliowy",
+      "quantity": 150.0
+    },
+    {
+      "name": "Makaron pelnoziarnisty",
+      "quantity": 40
+    },
+    {
+      "name": "Czekolada gorzka",
+      "quantity": 5
+    }
+  ],
+  "calories": 344.8,
+  "description": ""
+}

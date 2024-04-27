@@ -30,3 +30,9 @@ metals.sbt
 .idea
 .idea_modules
 /.worksheet/
+
+# Redis data directory
+data/*
+
+# Scala CLI
+.scala-build
