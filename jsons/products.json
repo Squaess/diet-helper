@@ -1,10 +1,17 @@
 {"name": "Pieprz czarny", "category": "Others"}
+{"name": "Cynamon", "category": "Others"}
+{"name": "Kmin rzymski", "category": "Others"}
+{"name": "Papryka wedzona", "category": "Others"}
+{"name": "Papryka czerwona przyprawa", "category": "Others"}
+{"name": "Oliwa z oliwek", "category": "Others"}
 {"name": "Cytryna", "category": "Vegetables"}
 {"name": "Koperek", "category": "Vegetables"}
 {"name": "Ogorek", "category": "Vegetables"}
+{"name": "Jagody", "category": "Vegetables"}
 {"name": "Losos wedzony", "category": "Fridge"}
 {"name": "Jajka", "category": "Others"}
 {"name": "Ser twarogowy poltlusty", "category": "Fridge"}
+{"name": "Piers z Kurczaka", "category": "Fridge"}
 {"name": "Siemie lnianie", "category": "Others"}
 {"name": "Babka jajowata", "category": "Others"}
 {"name": "Maka migdalowa", "category": "Others"}
@@ -21,6 +28,13 @@
 {"name": "Erytrol", "category": "Others"}
 {"name": "Makaron pelnoziarnisty", "category": "Others"}
 {"name": "Skyr Waniliowy", "category": "Fridge"}
+{"name": "Skyr Naturalny", "category": "Fridge"}
+{"name": "Ser mozzarella w kulkach", "category": "Fridge"}
 {"name": "Czekolada gorzka", "category": "Others"}
 {"name": "Truskawki", "category": "Vegetables"}
 {"name": "Baton, Protein 33% (sante)", "category": "Others"}
+{"name": "Ziola toskanskie", "category": "Others"}
+{"name": "Orzechy Nerkowca", "category": "Others"}
+{"name": "Woda", "category": "Others"}
+{"name": "Koncentrat pomidorowy", "category": "Others"}
+{"name": "Fasola czerwona w zalewie (konserwowa)", "category": "Others"}

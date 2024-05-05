@@ -49,7 +49,10 @@ object RedisOperations {
     override def get[A <: RedisDocument: Decoder](id: String): IO[Option[A]] =
       redisResource.use { redis =>
         for {
-          strValue <- redis.get(id).flatTap(_ => info"Getting $id")
+          strValue <- redis.get(id).flatTap(item => item match
+            case None => info"Could not find '$id'"
+            case Some(value) => info"Retrieved '$id'"
+          )
         } yield strValue.flatMap(decode[A](_).toOption)
       }
 

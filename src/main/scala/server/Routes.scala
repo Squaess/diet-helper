@@ -53,9 +53,11 @@ object Routes {
       case req @ POST -> Root =>
         for {
           recipe <- req.as[RecipeDSL]
-          _ <- IO.println(recipe)
-          _ <- Recipes.saveRecipe(recipe)
-          res <- Ok()
+          result <- Recipes.saveRecipe(recipe).option
+          res <- result match
+            case None => BadRequest()
+            case Some(value) => Ok()
+          
         } yield res
     }
 
