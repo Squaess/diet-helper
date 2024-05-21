@@ -8,8 +8,12 @@ import diethelper.services.RedisOperations
 import io.circe.generic.auto.*
 import io.circe.syntax.*
 import org.http4s.HttpRoutes
+import org.http4s.headers._
 import org.http4s.circe.CirceEntityDecoder.*
 import org.http4s.dsl.Http4sDsl
+import diethelper.views.HomePage
+import scalatags.Text
+import org.http4s.MediaType
 
 object Controllers {
 
@@ -17,6 +21,10 @@ object Controllers {
   import dsl._
 
   lazy val redisOperation = RedisOperations.Impl
+
+  def homePage: HttpRoutes[IO] = HttpRoutes.of[IO] { case GET -> Root =>
+    scalatagsToResponse(HomePage.generate())
+  }
 
   def diet: HttpRoutes[IO] = HttpRoutes.of[IO] { case req @ POST -> Root =>
     for {
@@ -36,7 +44,9 @@ object Controllers {
       case GET -> Root =>
         for {
           keys <- redisOperation.list("recipe:*")
-          res <- Ok(keys.asJson.noSpaces)
+          res <- scalatagsToResponse(
+            HomePage.generate(HomePage.listView(keys, 12))
+          )
         } yield res
 
       case GET -> Root / name =>
@@ -59,14 +69,17 @@ object Controllers {
         } yield res
     }
 
+  def products: HttpRoutes[IO] = HttpRoutes.of[IO] { case GET -> Root =>
+    for {
+      keys <- redisOperation.list(
+        s"${diethelper.domain.db.Product.table}:*"
+      )
+      res <- Ok(keys.asJson.noSpaces)
+    } yield res
+  }
+
   def product: HttpRoutes[IO] =
     HttpRoutes.of[IO] {
-      case GET -> Root =>
-        for {
-          keys <- redisOperation.list(s"${diethelper.domain.db.Product.table}:*")
-          res <- Ok(keys.asJson.noSpaces)
-        } yield res
-
       case GET -> Root / name =>
         for {
           product <- redisOperation.get[diethelper.domain.db.Product](
@@ -87,4 +100,9 @@ object Controllers {
           res <- Ok()
         } yield res
     }
+
+  private def scalatagsToResponse(view: Text.TypedTag[String]) = Ok(
+    body = view.render
+  ).map(_.withContentType(`Content-Type`(MediaType.text.html)))
+
 }

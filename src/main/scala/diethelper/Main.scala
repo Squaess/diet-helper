@@ -11,7 +11,9 @@ object Main extends IOApp.Simple:
     Router(
       "/product" -> Controllers.product,
       "/recipe" -> Controllers.recipe,
-      "/diet" -> Controllers.diet
+      "/products" -> Controllers.products,
+      "/diet" -> Controllers.diet,
+      "/home" -> Controllers.homePage
     ).orNotFound
 
   val server = EmberServerBuilder
