@@ -1,4 +1,4 @@
-package domain
+package diethelper.domain.db
 
 class RecipeTest extends munit.FunSuite {
   test("id creation") {

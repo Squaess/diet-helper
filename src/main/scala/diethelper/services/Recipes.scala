@@ -1,21 +1,23 @@
-package services
+package diethelper.services
 
 import cats.effect.IO
 import cats.implicits._
-import domain.Recipe
-import domain.ShoppingList
+import diethelper.domain.db.Recipe
+import diethelper.domain.db.ShoppingList
 import io.circe.generic.auto._
 import io.circe.syntax._
 import org.http4s.circe.CirceEntityDecoder._
-import domain.RecipeProduct
-import domain.Fridge
-import domain.Others
-import domain.Vegetables
-import domain.RecipeDSL
+import diethelper.domain.db.RecipeProduct
+import diethelper.domain.db.Fridge
+import diethelper.domain.db.Others
+import diethelper.domain.db.Vegetables
+import diethelper.domain.controller.RecipeDSL
+import diethelper.domain.db
 import org.typelevel.log4cats.Logger
 import org.typelevel.log4cats.slf4j.Slf4jLogger
 import org.typelevel.log4cats.syntax._
 import cats.effect.kernel.Sync
+import diethelper.domain.db.Product
 
 object Recipes {
 
@@ -45,7 +47,7 @@ object Recipes {
     for {
       res <- recipe.products
         .map(prod =>
-          redisOperation.get[domain.Product](domain.Product.id(prod.name))
+          redisOperation.get[db.Product](db.Product.id(prod.name))
         )
         .sequence
       shouldFail = res.exists(_.isEmpty)

@@ -1,4 +1,4 @@
-package domain
+package diethelper.domain.db
 
 final case class RecipeProduct(product: Product, quantity: Double) {
   def +(that: RecipeProduct): RecipeProduct = {
@@ -10,4 +10,3 @@ final case class RecipeProduct(product: Product, quantity: Double) {
   }
 }
 
-final case class RecipeProductDSL(name: String, quantity: Double)

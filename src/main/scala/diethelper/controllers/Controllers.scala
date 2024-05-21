@@ -1,19 +1,17 @@
-package server
+package diethelper.controllers
 
 import cats.effect.IO
-import cats.syntax.all._
-import io.circe.generic.auto._
-import io.circe.syntax._
+import diethelper.domain.db.Recipe
+import diethelper.domain.controller.RecipeDSL
+import diethelper.services.Recipes
+import diethelper.services.RedisOperations
+import io.circe.generic.auto.*
+import io.circe.syntax.*
 import org.http4s.HttpRoutes
+import org.http4s.circe.CirceEntityDecoder.*
 import org.http4s.dsl.Http4sDsl
-import services.RedisOperations
-import org.http4s.circe.CirceEntityDecoder._
-import domain.Recipe
-import services.Recipes
-import domain.ListCategory
-import domain.RecipeDSL
 
-object Routes {
+object Controllers {
 
   val dsl = Http4sDsl[IO]
   import dsl._
@@ -55,9 +53,9 @@ object Routes {
           recipe <- req.as[RecipeDSL]
           result <- Recipes.saveRecipe(recipe).option
           res <- result match
-            case None => BadRequest()
+            case None        => BadRequest()
             case Some(value) => Ok()
-          
+
         } yield res
     }
 
@@ -65,23 +63,25 @@ object Routes {
     HttpRoutes.of[IO] {
       case GET -> Root =>
         for {
-          keys <- redisOperation.list(s"${domain.Product.table}:*")
+          keys <- redisOperation.list(s"${diethelper.domain.db.Product.table}:*")
           res <- Ok(keys.asJson.noSpaces)
         } yield res
 
       case GET -> Root / name =>
         for {
-          product <- redisOperation.get[domain.Product](domain.Product.id(name))
+          product <- redisOperation.get[diethelper.domain.db.Product](
+            diethelper.domain.db.Product.id(name)
+          )
           res <- product.fold(NotFound())(x => Ok(x.asJson.noSpaces))
         } yield res
 
       case DELETE -> Root / name =>
-        redisOperation.delete(domain.Product.id(name)) >> Ok()
+        redisOperation.delete(diethelper.domain.db.Product.id(name)) >> Ok()
 
       case req @ POST -> Root =>
         for {
           product <- req
-            .as[domain.Product]
+            .as[diethelper.domain.db.Product]
             .onError(a => IO.println(a.toString()))
           _ <- redisOperation.save(product)
           res <- Ok()

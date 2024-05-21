@@ -1,4 +1,4 @@
-package domain
+package diethelper.domain.db
 
 import scala.reflect.ClassTag
 
@@ -30,9 +30,3 @@ object Recipe {
     )
 }
 
-final case class RecipeDSL(
-    name: String,
-    products: Vector[RecipeProductDSL],
-    calories: Double,
-    description: String
-)

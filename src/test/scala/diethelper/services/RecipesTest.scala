@@ -1,8 +1,7 @@
-package services
+package diethelper.services
 
-import domain._
-import services.Recipes.reduceProductsInCategory
-import services.Recipes.createShoppingList
+import diethelper.domain.db
+import diethelper.domain.db.*
 
 class RecipesTest extends munit.FunSuite {
   test("reduceProductsInCategory") {
@@ -12,14 +11,14 @@ class RecipesTest extends munit.FunSuite {
       RecipeProduct(products("prod1"), 1)
     )
     val prod1Obtained =
-      reduceProductsInCategory(testData).filter(_.product.name == "prod1")
-    assertEquals(reduceProductsInCategory(testData).length, 2)
+      Recipes.reduceProductsInCategory(testData).filter(_.product.name == "prod1")
+    assertEquals(Recipes.reduceProductsInCategory(testData).length, 2)
     assertEquals(prod1Obtained.length, 1)
     assertEquals(prod1Obtained.head.quantity, 2.0)
   }
 
   test("createShoppingList") {
-    val obtained = createShoppingList(testRecipes)
+    val obtained = Recipes.createShoppingList(testRecipes)
     assertEquals(obtained.fridge.length, 2)
     assertEquals(obtained.others.length, 2)
     assertEquals(obtained.vegetables.length, 1)
@@ -38,12 +37,12 @@ class RecipesTest extends munit.FunSuite {
   }
 
   private val products = Map(
-    "prod1" -> Product("prod1", Fridge),
-    "prod2" -> Product("prod2", Fridge),
-    "prod3" -> Product("prod3", Others),
-    "prod4" -> Product("prod4", Others),
-    "prod5" -> Product("prod5", Vegetables),
-    "prod6" -> Product("prod6", Vegetables)
+    "prod1" -> db.Product("prod1", Fridge),
+    "prod2" -> db.Product("prod2", Fridge),
+    "prod3" -> db.Product("prod3", Others),
+    "prod4" -> db.Product("prod4", Others),
+    "prod5" -> db.Product("prod5", Vegetables),
+    "prod6" -> db.Product("prod6", Vegetables)
   )
 
   private val testRecipes = Vector(

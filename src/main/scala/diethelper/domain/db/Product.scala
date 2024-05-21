@@ -1,4 +1,4 @@
-package domain
+package diethelper.domain.db
 
 case class Product(name: String, category: ListCategory) extends RedisDocument {
 

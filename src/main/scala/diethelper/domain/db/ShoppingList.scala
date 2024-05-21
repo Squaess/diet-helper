@@ -1,4 +1,4 @@
-package domain
+package diethelper.domain.db
 
 final case class ShoppingList(
     others: Vector[RecipeProduct],

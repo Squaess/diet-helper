@@ -1,4 +1,4 @@
-package services
+package diethelper.services
 
 import cats.effect.IO
 import cats.effect.kernel.Sync
@@ -7,7 +7,7 @@ import dev.profunktor.redis4cats.connection.RedisClient
 import dev.profunktor.redis4cats.data.RedisCodec
 import dev.profunktor.redis4cats.effect.Log.Stdout.given
 import dev.profunktor.redis4cats.effects.ScanArgs
-import domain.RedisDocument
+import diethelper.domain.db.RedisDocument
 import io.circe.Decoder
 import io.circe.Encoder
 import io.circe.parser.decode

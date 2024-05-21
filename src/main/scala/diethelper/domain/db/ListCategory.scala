@@ -1,4 +1,4 @@
-package domain
+package diethelper.domain.db
 
 sealed trait ListCategory(value: String)
 case object Fridge extends ListCategory("fridge")
