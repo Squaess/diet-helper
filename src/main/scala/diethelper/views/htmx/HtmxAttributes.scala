@@ -9,10 +9,12 @@ object HtmxAttributes {
 
   def delete(endpoint: String) = attr("hx-delete") := endpoint
   def get(endpoint: String) = attr("hx-get") := endpoint
+  def post(endpoint: String) = attr("hx-post") := endpoint
   // def indicator(indicatorType: String = "#spinner") = attr("hx-indicator") := indicatorType
   def select(value: String) = attr("hx-select") := value
   def swap(value: String) = attr("hx-swap") := value
 
   def target(element: String) = attr("hx-target") := element
-  // def trigger(value: String) = attr("hx-trigger") := value
+  def trigger(value: String) = attr("hx-trigger") := value
+  def include(value: String)= attr("hx-include") := value
 }

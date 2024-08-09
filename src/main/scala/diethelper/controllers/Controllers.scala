@@ -14,6 +14,9 @@ import org.http4s.dsl.Http4sDsl
 import diethelper.views.HomePage
 import scalatags.Text
 import org.http4s.MediaType
+import diethelper.views.RecipeView.newRecipeForm
+import diethelper.views.RecipeView.productField
+import diethelper.views.ProductView
 
 object Controllers {
 
@@ -22,8 +25,12 @@ object Controllers {
 
   lazy val redisOperation = RedisOperations.Impl
 
-  def homePage: HttpRoutes[IO] = HttpRoutes.of[IO] { case GET -> Root =>
-    scalatagsToResponse(HomePage.generate())
+  def homePage: HttpRoutes[IO] = HttpRoutes.of[IO] {
+    case GET -> Root =>
+      scalatagsToResponse(HomePage.generate())
+
+    case GET -> Root / "clicked"       => Ok("This is a content")
+    case GET -> Root / "trigger_delay" => Ok("I don't know")
   }
 
   def diet: HttpRoutes[IO] = HttpRoutes.of[IO] { case req @ POST -> Root =>
@@ -44,10 +51,21 @@ object Controllers {
       case GET -> Root =>
         for {
           keys <- redisOperation.list("recipe:*")
-          res <- scalatagsToResponse(
-            HomePage.generate(HomePage.listView(keys, 12))
-          )
+          // res <- scalatagsToResponse(
+          //   HomePage.generate(HomePage.listView(keys, 12))
+          // )
+          res <- Ok(keys.asJson.noSpaces)
         } yield res
+
+      case GET -> Root / "new" =>
+        scalatagsToResponse(HomePage.generate(newRecipeForm()))
+
+      case GET -> Root / "new" / "addProductField" / currentProductCountString => {
+        val currentProductCount = currentProductCountString.toInt
+        val newProductFieldHtml = productField(currentProductCount)
+        scalatagsToResponse(newProductFieldHtml)
+        // Ok(newProductFieldHtml).as("text/html")
+      }
 
       case GET -> Root / name =>
         for {
@@ -58,7 +76,7 @@ object Controllers {
       case DELETE -> Root / name =>
         redisOperation.delete(Recipe.id(name)) >> Ok()
 
-      case req @ POST -> Root =>
+      case req @ POST -> Root / "new" =>
         for {
           recipe <- req.as[RecipeDSL]
           result <- Recipes.saveRecipe(recipe).option
@@ -80,6 +98,14 @@ object Controllers {
 
   def product: HttpRoutes[IO] =
     HttpRoutes.of[IO] {
+
+      case GET -> Root / "new" => scalatagsToResponse(ProductView.newProductRow)
+
+      case GET -> Root / "empty" =>
+        Ok(ProductView.empty).map(
+          _.withContentType(`Content-Type`(MediaType.text.html))
+        )
+
       case GET -> Root / name =>
         for {
           product <- redisOperation.get[diethelper.domain.db.Product](
