@@ -1,3 +1,5 @@
+package diethelper
+
 import cats.effect.*
 import com.comcast.ip4s._
 import org.http4s.ember.server._

@@ -36,3 +36,6 @@ data/*
 
 # Scala CLI
 .scala-build
+
+# Node / Vite
+node_modules
