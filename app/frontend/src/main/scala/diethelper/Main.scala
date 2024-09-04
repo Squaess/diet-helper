@@ -4,31 +4,17 @@ import scala.scalajs.js
 import scala.scalajs.js.annotation.*
 
 import org.scalajs.dom
+import com.raquo.laminar.api.L.{*, given}
 
 @js.native @JSImport("/javascript.svg", JSImport.Default)
 val javascriptLogo: String = js.native
 
 @main
 def frontend = {
-  dom.document.querySelector("#app").innerHTML = s"""
-    <div>
-      <a href="https://vitejs.dev" target="_blank">
-        <img src="/vite.svg" class="logo" alt="Vite logo" />
-      </a>
-      <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript" target="_blank">
-        <img src="$javascriptLogo" class="logo vanilla" alt="JavaScript logo" />
-      </a>
-      <h1>Hello Scala.js oi!</h1>
-      <div class="card">
-        <button id="counter" type="button"></button>
-      </div>
-      <p class="read-the-docs">
-        Click on the Vite logo to learn more
-      </p>
-    </div>
-  """
-
-  setupCounter(dom.document.getElementById("counter"))
+  renderOnDomContentLoaded(
+    dom.document.getElementById("app"),
+    MainPage.appElement()
+  )
 }
 
 def setupCounter(element: dom.Element): Unit = {
@@ -41,3 +27,35 @@ def setupCounter(element: dom.Element): Unit = {
   element.addEventListener("click", e => setCounter(counter + counter))
   setCounter(1)
 }
+
+object MainPage:
+  def appElement() =
+    div(
+      a(
+        href := "https://vitejs.dev",
+        target := "_blank",
+        img(src := "/vite.svg", className := "logo", alt := "Vite Logo")
+      ),
+      a(
+        href := "https://developer.mozilla.org/en-US/docs/Web/JavaScript",
+        target := "_blank",
+        img(
+          src := javascriptLogo,
+          className := "logo vanilla",
+          alt := "JavaScript logo"
+        )
+      ),
+      h1("Hello Friend"),
+      div(className := "card", counterButton()),
+      p(className := "read-the-docs", "Click on the Vite logo to learn more")
+    )
+
+  def counterButton(): Element = {
+    val counter = Var(1)
+    button(
+      tpe := "button",
+      "count: ",
+      child.text <-- counter,
+      onClick --> {event => counter.update(c => c + c)}
+    )
+  }

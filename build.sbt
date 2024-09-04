@@ -30,6 +30,12 @@ val tests = Seq(
     "org.typelevel" %% "munit-cats-effect" % catsTestVersion % Test,
 )
 
+lazy val common = project
+  .in(file("./app/common"))
+  .settings(
+    scalaVersion := scala3Version
+  )
+
 lazy val backend = project
   .in(file("./app/backend"))
   .settings(
@@ -69,3 +75,4 @@ lazy val frontend = project
     libraryDependencies += "org.scala-js" %%% "scalajs-dom" % "2.8.0",
     libraryDependencies += "com.raquo" %%% "laminar" % "17.0.0"
   )
+  .dependsOn(common)
