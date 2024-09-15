@@ -14,6 +14,7 @@ def frontend = {
   renderOnDomContentLoaded(
     dom.document.getElementById("app"),
     MainPage.appElement()
+    // ProductModel.appElement()
   )
 }
 
@@ -45,7 +46,7 @@ object MainPage:
           alt := "JavaScript logo"
         )
       ),
-      h1("Hello Friend"),
+      h1("Hello Stas"),
       div(className := "card", counterButton()),
       p(className := "read-the-docs", "Click on the Vite logo to learn more")
     )
