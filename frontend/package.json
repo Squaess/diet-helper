@@ -4,12 +4,12 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite app/frontend",
-    "build": "vite build app/frontend",
-    "preview": "vite preview app/fronted"
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
   },
   "devDependencies": {
     "@scala-js/vite-plugin-scalajs": "^1.0.0",
-    "vite": "^4.1.0"
+    "vite": "^5.2.10"
   }
 }
