@@ -1,6 +1,7 @@
 package diethelper.controllers
 
 import cats.effect.IO
+import cats.implicits.*
 import diethelper.domain.db.Recipe
 import diethelper.domain.controller.RecipeDSL
 import diethelper.services.Recipes
@@ -61,11 +62,11 @@ object Controllers {
 
   def product: HttpRoutes[IO] =
     HttpRoutes.of[IO] {
-      case GET -> Root =>
-        for {
-          keys <- redisOperation.list(s"${diethelper.domain.db.Product.table}:*")
-          res <- Ok(keys.asJson.noSpaces)
-        } yield res
+      case GET -> Root => for {
+        keys <- redisOperation.list(s"${diethelper.domain.db.Product.table}:*")
+        products <- keys.map( name => redisOperation.get[diethelper.domain.db.Product](diethelper.domain.db.Product.id(name))).sequence
+        res <- Ok(products.asJson.noSpaces)
+      } yield res
 
       case GET -> Root / name =>
         for {

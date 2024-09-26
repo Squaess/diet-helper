@@ -1,78 +1,105 @@
 package diethelper
 
 import com.raquo.laminar.api.L.{*, given}
-import diethelper.common.model.{ProductList, Fridge, MyProduct, MyProductID}
-
-final class ProductPage {
-  val dataVar: Var[ProductList] = Var(List.empty)
-  val dataSignal = dataVar.signal
-
-  def addProduct(product: MyProduct): Unit =
-    dataVar.update(data => {
-      data :+ product
-    })
-
-  def removeProduct(product: MyProduct): Unit =
-    dataVar.update(data => data.filter(_.id != product.id))
-
-}
+import com.raquo.laminar.keys.HtmlAttr
+import com.raquo.laminar.codecs.StringAsIsCodec
+import diethelper.common.model.{ProductList, MyProduct, ListCategory}
+import org.scalajs.dom
+import io.circe.syntax.*
+import io.circe.generic.auto.*
+import io.circe.parser.decode
 
 object ProductPage {
-  val productModel = new ProductPage
+
+  val allProducts: Var[ProductList] = Var(List.empty)
+
+  def updateAllProducts(products: ProductList): Unit = {
+    allProducts.set(products)
+  }
 
   def appElement() = {
     div(
-      h1("Product page"),
-      renderTable(),
-      renderDataList()
+      h1("Input product"),
+      renderProductInput,
+      h1("All Products"),
+      renderCurrentProducts
     )
   }
 
-  def renderTable() = {
+  def renderProductInput = {
     table(
-      thead(tr(th("Name"), th("Category"), th("Action"))),
+      thead(tr(td("Name"), td("Category"), td("Save"))),
       tbody(
-        children <-- productModel.dataSignal.split(_.id) { (id, initial, itemSignal) =>
-          renderProductItem(initial, itemSignal)
+        tr(
+          td(
+            input(
+              typ := "text",
+              idAttr := "name"
+            )
+          ),
+          td(inputForCategory),
+          td(
+            button(
+              "➤",
+              onClick.preventDefault --> { (_) =>
+                val name = dom.document
+                  .getElementById("name")
+                  .asInstanceOf[dom.HTMLInputElement]
+                  .value
+                val category = dom.document
+                  .getElementById("category")
+                  .asInstanceOf[dom.HTMLSelectElement]
+                  .value
+                dom.window.alert(s"Submit ($name, $category)")
+              }
+            )
+          )
+        )
+      )
+    )
+  }
+
+  def inputForCategory = {
+    val options = ListCategory.values
+      .map(cat => option(cat.toString, value := cat.value))
+    select(
+      options*
+    ).amend(idAttr := "category")
+
+  }
+
+  def renderCurrentProducts = {
+    table(
+      thead(tr(td("Product name"), td("Category"))),
+      tbody(
+        children <-- allProducts.signal.split(_.name) {
+          (name, initial, signal) => renderProduct(signal)
         }
       ),
       tfoot(
         tr(
           td(
             button(
-              "➕",
-              onClick --> (_ =>
-                productModel.addProduct(MyProduct(MyProductID(), "test", Fridge))
-              )
+              "🗘",
+              onClick.flatMap(_ =>
+                FetchStream.get("http://localhost:8080/product")
+              ) --> { responseText =>
+                decode[ProductList](responseText) match
+                  case Left(value)  => dom.window.alert(value.getMessage())
+                  case Right(value) => updateAllProducts(value)
+              }
             )
-          ),
-          td(),
-          td()
+          )
         )
       )
     )
   }
 
-  def renderProductItem(item: MyProduct, itemSignal: Signal[MyProduct]) = {
+  def renderProduct(productSignal: Signal[MyProduct]) = {
     tr(
-      td(
-        input(
-          typ := "text",
-          value <-- itemSignal.map(_.name),
-          onInput.mapToValue --> { (newName: String) => productModel.dataVar.update{ data => data.map { existingItem => if existingItem.id == item.id then existingItem.copy(name = newName) else existingItem}}}
-        )
-        // child.text <-- itemSignal.map(_.name)
-      ),
-      td(child.text <-- itemSignal.map(_.category.value)),
-      td(button("🗑️", onClick --> (_ => productModel.removeProduct(item))))
+      td(child.text <-- productSignal.map(_.name)),
+      td(child.text <-- productSignal.map(_.category.value))
     )
   }
 
-  def renderDataList() = {
-    ul(
-      children <-- productModel.dataSignal.split(_.id) { (id, initial, dataSignal) =>
-        li(child.text <-- dataSignal.map(item => s"${item.name} ==> ${item.category.value}"))
-      }
-    )
-  }
 }

@@ -54,6 +54,9 @@ lazy val frontend = (project in file("frontend"))
         .withModuleSplitStyle(
           ModuleSplitStyle.SmallModulesFor(List("frontend")))
     },
+    libraryDependencies += "io.circe" %%% "circe-core" % circeVersion,
+    libraryDependencies += "io.circe" %%% "circe-generic" % circeVersion,
+    libraryDependencies += "io.circe" %%% "circe-parser" % circeVersion,
     libraryDependencies += "org.scala-js" %%% "scalajs-dom" % "2.8.0",
     libraryDependencies += "com.raquo" %%% "laminar" % "17.0.0"
   )

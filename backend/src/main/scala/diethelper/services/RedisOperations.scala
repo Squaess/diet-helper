@@ -78,7 +78,7 @@ object RedisOperations {
         }
     }
 
-    def loopRedisScan(
+    private def loopRedisScan(
         redis: RedisCommands[IO, String, String],
         prevCrs: KeyScanCursor[String],
         scanArgs: ScanArgs,

@@ -7,7 +7,7 @@ import com.raquo.laminar.api.L.{*, given}
 def frontend = {
   renderOnDomContentLoaded(
     dom.document.getElementById("app"),
-    // MainPage.appElement()
+    // LaminarExample.appElement(),
     ProductPage.appElement()
   )
 }
