@@ -14,9 +14,7 @@ object Recipe {
   val dsl = Http4sDsl[IO]
   import dsl._
 
-  lazy val redisOperations = RedisOperations.Impl
-
-  def getRoutes: HttpRoutes[IO] = HttpRoutes.of[IO] {
+  def getRoutes(redisOperations: RedisOperations[IO]): HttpRoutes[IO] = HttpRoutes.of[IO] {
     case GET -> Root =>
       for {
         keys <- redisOperations.list[Recipe]

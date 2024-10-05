@@ -14,9 +14,7 @@ import org.typelevel.log4cats.slf4j.Slf4jLogger
 object DietService {
   implicit def logger[F[_]: Sync]: Logger[F] = Slf4jLogger.getLogger[F]
 
-  val redisOperations = RedisOperations.Impl
-
-  def getRecipes(ids: List[String]): IO[List[Recipe]] = ids
+  def getRecipes(ids: List[String], redisOperations: RedisOperations[IO]): IO[List[Recipe]] = ids
     .map { recipe => redisOperations.get[Recipe](recipe) }
     .sequence
     .map { maybeRecipe =>
