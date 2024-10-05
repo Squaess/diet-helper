@@ -5,15 +5,15 @@ import com.comcast.ip4s._
 import org.http4s.ember.server._
 import org.http4s.server.Router
 import org.typelevel.log4cats.slf4j.loggerFactoryforSync
-import diethelper.controllers.Controllers
+import diethelper.controllers.{Product, Recipe, Diet}
 
 object Main extends IOApp.Simple:
 
   val httpApp =
     Router(
-      "/product" -> Controllers.product,
-      "/recipe" -> Controllers.recipe,
-      "/diet" -> Controllers.diet
+      "/product" -> Product.getRoutes,
+      "/recipe" -> Recipe.getRoutes,
+      "/diet" -> Diet.getRoutes
     ).orNotFound
 
   val server = EmberServerBuilder
