@@ -20,13 +20,15 @@ import dev.profunktor.redis4cats.RedisCommands
 
 trait RedisOperations {
 
-  def save[A <: RedisDocument: Encoder](document: A): IO[Unit]
+  def save[A: Encoder](document: A)(implicit doc: RedisDocument[A]): IO[Unit]
 
-  def get[A <: RedisDocument: Decoder](id: String): IO[Option[A]]
+  def get[A: Decoder](name: String)(implicit
+      doc: RedisDocument[A]
+  ): IO[Option[A]]
 
-  def delete(id: String): IO[Long]
+  def delete[A](name: String)(implicit doc: RedisDocument[A]): IO[Long]
 
-  def list(pattern: String): IO[List[String]]
+  def list[A](implicit doc: RedisDocument[A]): IO[List[String]]
 }
 
 object RedisOperations {
@@ -39,31 +41,35 @@ object RedisOperations {
       .from("redis://localhost")
       .flatMap(Redis[IO].fromClient(_, RedisCodec.Utf8))
 
-    override def save[A <: RedisDocument: Encoder](obj: A): IO[Unit] =
+    override def save[A: Encoder](
+        document: A
+    )(implicit doc: RedisDocument[A]): IO[Unit] =
       redisResource.use { redis =>
         redis
-          .set(obj.id, obj.asJson.noSpaces)
-          .flatTap(_ => info"saved ${obj.id}")
+          .set(doc.id(document), document.asJson.noSpaces)
       }
 
-    override def get[A <: RedisDocument: Decoder](id: String): IO[Option[A]] =
+    override def get[A: Decoder](
+        name: String
+    )(implicit doc: RedisDocument[A]): IO[Option[A]] =
       redisResource.use { redis =>
-        for {
-          strValue <- redis.get(id).flatTap(item => item match
-            case None => info"Could not find '$id'"
-            case Some(value) => info"Retrieved '$id'"
-          )
-        } yield strValue.flatMap(decode[A](_).toOption)
+        redis.get(doc.id(name)).flatTap(item => info"$item").map {
+          case None        => None
+          case Some(value) => decode[A](value).toOption
+        }
       }
 
-    override def delete(id: String): IO[Long] =
+    override def delete[A](
+        name: String
+    )(implicit doc: RedisDocument[A]): IO[Long] =
       redisResource.use { redis =>
         redis
-          .del(id)
-          .flatTap(_ => info"Deleted $id")
+          .del(doc.id(name))
+          .flatTap(_ => info"Deleted $name")
       }
 
-    override def list(pattern: String): IO[List[String]] = {
+    override def list[A](implicit doc: RedisDocument[A]): IO[List[String]] = {
+      val pattern = s"${doc.table}:*"
       val args = ScanArgs(pattern)
       redisResource
         .use { redis =>
