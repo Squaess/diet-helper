@@ -46,7 +46,7 @@ class RecipesTest extends munit.FunSuite {
   )
 
   private val testRecipes = Vector(
-    Recipe(
+    DbRecipe(
       name = "rec1",
       products = Vector(
         RecipeProduct(products("prod1"), 1),
@@ -56,7 +56,7 @@ class RecipesTest extends munit.FunSuite {
       calories = 12,
       description = ""
     ),
-    Recipe(
+    DbRecipe(
       name = "rec2",
       products = Vector(
         RecipeProduct(products("prod2"), 1),
@@ -66,7 +66,7 @@ class RecipesTest extends munit.FunSuite {
       calories = 12,
       description = ""
     ),
-    Recipe(
+    DbRecipe(
       name = "rec3",
       products = Vector(
         RecipeProduct(products("prod3"), 1),

@@ -9,6 +9,7 @@
   * wyebiranie przepisów
   * dodawanie na x dni
   * modyfikowanie kaloryczności
+* make sure tha domain is serializable to json (include that in common project)
 
 ### Usage
 

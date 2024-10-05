@@ -1,12 +1,22 @@
 package diethelper.common.model
 
-final class MyProductID
+import scala.util.Random
+
 final case class MyProduct(name: String, category: ListCategory)
 
-enum ListCategory(val value: String) {
-  case Fridge extends ListCategory("fridge")
-  case Others extends ListCategory("others")
-  case Vegetables extends ListCategory("vegetables")
+enum ListCategory {
+  case Fridge extends ListCategory
+  case Others extends ListCategory
+  case Vegetables extends ListCategory
+
+}
+
+object ListCategory {
+
+  def randomCategory: ListCategory = {
+    val m = ListCategory.values.length
+    ListCategory.values(Random.nextInt(m))
+  }
 }
 
 type ProductList = List[MyProduct]

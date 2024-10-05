@@ -8,6 +8,7 @@ def frontend = {
   renderOnDomContentLoaded(
     dom.document.getElementById("app"),
     // LaminarExample.appElement(),
-    ProductPage.appElement()
+    // ProductPage.appElement()
+    RecipePage.appElement()
   )
 }

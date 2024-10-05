@@ -34,13 +34,12 @@ val tests = Seq(
 
 lazy val common = crossProject.crossType(CrossType.Pure).in(file("common"))
 
-
 lazy val backend = (project in file("backend"))
   .settings(
     libraryDependencies ++= circe ++ http4s ++ logging ++ tests,
     libraryDependencies += "dev.profunktor" %% "redis4cats-effects" % redis4catsVersion,
     libraryDependencies += "org.typelevel" %% "cats-effect" % catsVersion,
-  )
+  ).dependsOn(common.jvm)
 
 lazy val frontend = (project in file("frontend"))
   .enablePlugins(ScalaJSPlugin)

@@ -13,8 +13,12 @@ object ProductPage {
 
   val allProducts: Var[ProductList] = Var(List.empty)
 
-  def updateAllProducts(products: ProductList): Unit = {
+  def setAllProducts(products: ProductList): Unit = {
     allProducts.set(products)
+  }
+
+  def deleteFromAllProducts(name: String): Unit = {
+    allProducts.update(products => products.filter(p => p.name != name))
   }
 
   def appElement() = {
@@ -41,7 +45,7 @@ object ProductPage {
           td(
             button(
               "➤",
-              onClick.preventDefault --> { (_) =>
+              onClick.preventDefault.flatMap { (_) =>
                 val name = dom.document
                   .getElementById("name")
                   .asInstanceOf[dom.HTMLInputElement]
@@ -50,7 +54,14 @@ object ProductPage {
                   .getElementById("category")
                   .asInstanceOf[dom.HTMLSelectElement]
                   .value
-                dom.window.alert(s"Submit ($name, $category)")
+                val productToInsert =
+                  MyProduct(name, ListCategory.valueOf(category))
+                FetchStream.post(
+                  "http://localhost:8080/product",
+                  _.body(productToInsert.asJson.noSpaces)
+                )
+              } --> { response =>
+                dom.window.alert(response)
               }
             )
           )
@@ -61,7 +72,7 @@ object ProductPage {
 
   def inputForCategory = {
     val options = ListCategory.values
-      .map(cat => option(cat.toString, value := cat.value))
+      .map(cat => option(cat.toString))
     select(
       options*
     ).amend(idAttr := "category")
@@ -73,7 +84,7 @@ object ProductPage {
       thead(tr(td("Product name"), td("Category"))),
       tbody(
         children <-- allProducts.signal.split(_.name) {
-          (name, initial, signal) => renderProduct(signal)
+          (name, initial, signal) => renderProduct(name, signal)
         }
       ),
       tfoot(
@@ -86,7 +97,7 @@ object ProductPage {
               ) --> { responseText =>
                 decode[ProductList](responseText) match
                   case Left(value)  => dom.window.alert(value.getMessage())
-                  case Right(value) => updateAllProducts(value)
+                  case Right(value) => setAllProducts(value)
               }
             )
           )
@@ -95,11 +106,21 @@ object ProductPage {
     )
   }
 
-  def renderProduct(productSignal: Signal[MyProduct]) = {
+  def renderProduct(name: String, productSignal: Signal[MyProduct]) = {
     tr(
       td(child.text <-- productSignal.map(_.name)),
-      td(child.text <-- productSignal.map(_.category.value))
+      td(child.text <-- productSignal.map(_.category.toString())),
+      td(
+        button(
+          "❌",
+          onClick.flatMap(_ =>
+            FetchStream.apply(_.DELETE, s"http://localhost:8080/product/$name")
+          ) --> { response =>
+            dom.window.alert(response)
+            deleteFromAllProducts(name)
+          }
+        )
+      )
     )
   }
-
 }

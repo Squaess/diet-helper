@@ -2,8 +2,8 @@ package diethelper.controllers
 
 import cats.effect.IO
 import cats.implicits.*
-import diethelper.domain.db.Recipe
-import diethelper.domain.controller.RecipeDSL
+import diethelper.domain.db.DbRecipe
+import diethelper.common.model.Recipe
 import diethelper.services.Recipes
 import diethelper.services.RedisOperations
 import io.circe.generic.auto.*
@@ -42,16 +42,16 @@ object Controllers {
 
       case GET -> Root / name =>
         for {
-          recipe <- redisOperation.get[Recipe](Recipe.id(name))
+          recipe <- redisOperation.get[DbRecipe](DbRecipe.id(name))
           res <- recipe.fold(NotFound())(r => Ok(r.asJson.noSpaces))
         } yield res
 
       case DELETE -> Root / name =>
-        redisOperation.delete(Recipe.id(name)) >> Ok()
+        redisOperation.delete(DbRecipe.id(name)) >> Ok()
 
       case req @ POST -> Root =>
         for {
-          recipe <- req.as[RecipeDSL]
+          recipe <- req.as[Recipe]
           result <- Recipes.saveRecipe(recipe).option
           res <- result match
             case None        => BadRequest()
