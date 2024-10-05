@@ -14,13 +14,10 @@ object Product {
   val dsl = Http4sDsl[IO]
   import dsl._
 
-  lazy val redisOperations = RedisOperations.Impl
-
-  def getRoutes: HttpRoutes[IO] = HttpRoutes.of[IO] {
+  def getRoutes(redisOperations: RedisOperations[IO]): HttpRoutes[IO] = HttpRoutes.of[IO] {
 
     case GET -> Root => for {
       keys <- redisOperations.list[MyProduct]
-      _ <- IO.println(keys)
       products <- keys.map(name => redisOperations.get[MyProduct](name)).sequence
       res <- Ok(products.asJson.noSpaces)
     } yield res
