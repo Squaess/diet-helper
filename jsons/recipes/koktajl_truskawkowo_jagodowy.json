@@ -1,17 +1,70 @@
 {
   "name": "Koktajl truskawkowo-jagodowy",
+  "steps": "1. Owoce wyjmij wcześniej z zamrażarki (około 10-15 minut).\n2. Wszystkie składniki (poza nerkowcami) przełóż do blendera.\n3. Dokładnie zmiksuj.\n4. Przelej do wysokiej szklanki.\n5. Podawaj z nerkowcami.",
   "products": [
-    {
-      "name": "Truskawki",
-      "quantity": 150
-    },
-    {"name": "Jagody", "quantity": 100},
-    {"name": "Banan", "quantity": 60},
-    {"name": "Skyr Naturalny", "quantity": 100},
-    {"name": "Woda", "quantity": 120},
-    {"name": "Erytrol", "quantity": 25},
-    {"name": "Orzechy Nerkowca", "quantity": 35}
+    [
+      {
+        "name": "Truskawki",
+        "category": {
+          "Vegetables": {}
+        }
+      },
+      150
+    ],
+    [
+      {
+        "name": "Jagody",
+        "category": {
+          "Vegetables": {}
+        }
+      },
+      100
+    ],
+    [
+      {
+        "name": "Banan",
+        "category": {
+          "Vegetables": {}
+        }
+      },
+      60
+    ],
+    [
+      {
+        "name": "Skyr Naturalny",
+        "category": {
+          "Fridge": {}
+        }
+      },
+      100
+    ],
+    [
+      {
+        "name": "Woda",
+        "category": {
+          "Others": {}
+        }
+      },
+      120
+    ],
+    [
+      {
+        "name": "Erytrol",
+        "category": {
+          "Others": {}
+        }
+      },
+      25
+    ],
+    [
+      {
+        "name": "Orzechy Nerkowca",
+        "category": {
+          "Others": {}
+        }
+      },
+      35
+    ]
   ],
-  "calories": 418,
-  "description": "1. Owoce wyjmij wcześniej z zamrażarki (około 10-15 minut).\n2. Wszystkie składniki (poza nerkowcami) przełóż do blendera.\n3. Dokładnie zmiksuj.\n4. Przelej do wysokiej szklanki.\n5. Podawaj z nerkowcami."
+  "calories": 418
 }

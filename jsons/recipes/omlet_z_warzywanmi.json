@@ -1,51 +1,106 @@
 {
   "name": "Omlet z warzywami",
+  "steps": "1. Suszone pomidory odsącz z oleju, pokrój w paski i przełóż na lekko rozgrzaną patelnię.\n2. Cebulę pokrój w piórka, dołóż do pomidorów.\n3. Cukinię pokrój w pół plasterki i przełóż na patelnię.\n4. Pieczarki obierz (lub tylko umyj), pokrój w plasterki i przełóż na patelnię.\n5. Dopraw warzywa pieprzem, ziołami i solą.\n6. Podsmaż 2-3 minuty mieszając od czasu do czasu.\n7. Przykryj i podduś kilka minut do czasu, aż warzywa będą miękkie.\n8. W międzyczasie do miski wbij jajka, dodaj serek (np. Bieluch) i tarty parmezan (możesz zastąpić grana padano lub innym twardym serem).\n9. Dokładnie wymieszaj za pomocą widelca tak, aby składniki dobrze się połączyły.\n10. Przelej jajeczną masę na patelnię i smaż z jednej strony pod przykryciem na wolnym ogniu do czasu, aż jajka będą ścięte na całości (nie zajmie to dłużej niż 5 minut).\n11. Gotowego omleta przełóż na talerz, podawaj z ketchupem bez cukru.",
   "products": [
-    {
-      "name": "Suszone pomidory",
-      "quantity": 45
-    },
-    {
-      "name": "Cebula",
-      "quantity": 50
-    },
-    {
-      "name": "Cukinia",
-      "quantity": 150
-    },
-    {
-      "name": "Pieczarki",
-      "quantity": 100
-    },
-    {
-      "name": "Pieprz czarny",
-      "quantity": 1
-    },
-    {
-      "name": "Ziola toskanskie",
-      "quantity": 2
-    },
-    {
-      "name": "Sol",
-      "quantity": 1
-    },
-    {
-      "name": "Parmezan",
-      "quantity": 16
-    },
-    {
-      "name": "Jajka",
-      "quantity": 168
-    },
-    {
-      "name": "Serek bieluch",
-      "quantity": 25
-    },
-    {
-      "name": "Ketchup",
-      "quantity": 15
-    }
+    [
+      {
+        "name": "Suszone pomidory",
+        "category": {
+          "Vegetables": {}
+        }
+      },
+      45
+    ],
+    [
+      {
+        "name": "Cebula",
+        "category": {
+          "Vegetables": {}
+        }
+      },
+      50
+    ],
+    [
+      {
+        "name": "Cukinia",
+        "category": {
+          "Vegetables":{}
+        }
+      },
+      150
+    ],
+    [
+      {
+        "name": "Pieczarki",
+        "category": {
+          "Vegetables": {}
+        }
+      },
+      100
+    ],
+    [
+      {
+        "name": "Pieprz czarny",
+        "category": {
+          "Others":{}
+        }
+      },
+      1
+    ],
+    [
+      {
+        "name": "Ziola toskanskie",
+        "category": {
+          "Others":{}
+        }
+      },
+      2
+    ],
+    [
+      {
+        "name": "Sol",
+        "category": {
+          "Others":{}
+        }
+      },
+      1
+    ],
+    [
+      {
+        "name": "Parmezan",
+        "category": {
+          "Fridge":{}
+        }
+      },
+      16
+    ],
+    [
+      {
+        "name": "Jajka",
+        "category": {
+          "Others":{}
+        }
+      },
+      168
+    ],
+    [
+      {
+        "name": "Serek bieluch",
+        "category": {
+          "Fridge": {}
+        }
+      },
+      25
+    ],
+    [
+      {
+        "name": "Ketchup",
+        "category": {
+          "Others": {}
+        }
+      },
+      15
+    ]
   ],
-  "calories": 513,
-  "description": "1. Suszone pomidory odsącz z oleju, pokrój w paski i przełóż na lekko rozgrzaną patelnię.\n2. Cebulę pokrój w piórka, dołóż do pomidorów.\n3. Cukinię pokrój w pół plasterki i przełóż na patelnię.\n4. Pieczarki obierz (lub tylko umyj), pokrój w plasterki i przełóż na patelnię.\n5. Dopraw warzywa pieprzem, ziołami i solą.\n6. Podsmaż 2-3 minuty mieszając od czasu do czasu.\n7. Przykryj i podduś kilka minut do czasu, aż warzywa będą miękkie.\n8. W międzyczasie do miski wbij jajka, dodaj serek (np. Bieluch) i tarty parmezan (możesz zastąpić grana padano lub innym twardym serem).\n9. Dokładnie wymieszaj za pomocą widelca tak, aby składniki dobrze się połączyły.\n10. Przelej jajeczną masę na patelnię i smaż z jednej strony pod przykryciem na wolnym ogniu do czasu, aż jajka będą ścięte na całości (nie zajmie to dłużej niż 5 minut).\n11. Gotowego omleta przełóż na talerz, podawaj z ketchupem bez cukru."
+  "calories": 513
 }

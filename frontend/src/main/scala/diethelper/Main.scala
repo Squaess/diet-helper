@@ -9,6 +9,7 @@ def frontend = {
     dom.document.getElementById("app"),
     // LaminarExample.appElement(),
     // ProductPage.appElement()
-    RecipePage.appElement()
+    // RecipePage.appElement()
+    RecipeView.appElement()
   )
 }

@@ -9,3 +9,4 @@ final case class Recipe(
 
 type RecipeProduct = Tuple2[MyProduct, Double]
 type RecipeProducts = List[RecipeProduct]
+type RecipeList = List[Recipe]

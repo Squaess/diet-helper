@@ -14,20 +14,18 @@ import org.typelevel.log4cats.slf4j.Slf4jLogger
 object DietService {
   implicit def logger[F[_]: Sync]: Logger[F] = Slf4jLogger.getLogger[F]
 
-  def getRecipes(ids: List[String], redisOperations: RedisOperations[IO]): IO[List[Recipe]] = ids
-    .map { recipe => redisOperations.get[Recipe](recipe) }
-    .sequence
-    .map { maybeRecipe =>
-      if (maybeRecipe.exists(_.isEmpty)) {
-        List.empty[Recipe]
-      } else {
-        maybeRecipe.map(_.get)
-      }
-    }
-
+  /**
+    * Multiply all products inside the recipy by a factor and
+    * modify the calories.
+    *
+    * @param recipe recipe you want to scale
+    * @param factor factor by which you want to scale
+    * @return new recipe with scale products and calories
+    */
   def multiplyRecipe(recipe: Recipe, factor: Double): Recipe =
     recipe.copy(products =
-      recipe.products.map(p => p.copy(p._1, p._2 * factor))
+      recipe.products.map(p => p.copy(p._1, p._2 * factor)),
+      calories = recipe.calories * factor
     )
 
   def createShoppingList(recipes: List[Recipe]): ShoppingList = {
@@ -47,7 +45,7 @@ object DietService {
     )
   }
 
-  def reduceCategoryProducts(
+  private def reduceCategoryProducts(
       products: List[RecipeProduct]
   ): List[RecipeProduct] = {
     products
@@ -57,7 +55,7 @@ object DietService {
       .toList
   }
 
-  def myProductReducer(
+  private def myProductReducer(
       prod1: RecipeProduct,
       prod2: RecipeProduct
   ): RecipeProduct = {

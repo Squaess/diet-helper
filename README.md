@@ -1,5 +1,13 @@
 ## sbt project compiled with Scala 3
 
+## Run frontend
+
+1. `cd frontend`
+2. This is only for development there should be something else for prodction: `npm run dev`
+
+## Run backend
+???
+
 ## TODO
 
 * error handling - not found responses 

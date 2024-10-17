@@ -1,6 +1,7 @@
 package diethelper.controllers
 
 import cats.effect.IO
+import cats.implicits._
 import diethelper.common.model.Recipe
 import diethelper.services.RedisOperations
 import io.circe.generic.auto.*
@@ -18,7 +19,8 @@ object Recipe {
     case GET -> Root =>
       for {
         keys <- redisOperations.list[Recipe]
-        res <- Ok(keys.asJson.noSpaces)
+        recipes <- keys.map(redisOperations.get[Recipe](_)).traverse(_.map(_.toList)).map(_.flatten)
+        res <- Ok(recipes.asJson.noSpaces)
       } yield res
 
     case GET -> Root / name =>
@@ -32,9 +34,14 @@ object Recipe {
 
     case req @ POST -> Root =>
       for {
-        recipe <- req.as[Recipe]
-        _ <- redisOperations.save[Recipe](recipe)
-        res <- Created()
+        decoded <- req.attemptAs[Recipe].value
+        res <- decoded match {
+          case Left(value) => BadRequest(s"Invalid recipe provided, fix the format!")
+          case Right(value) => for {
+            _ <- redisOperations.save[Recipe](value)
+            res <- Created()
+          } yield res
+        }
       } yield res
   }
 }

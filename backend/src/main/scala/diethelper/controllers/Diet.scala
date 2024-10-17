@@ -8,6 +8,7 @@ import io.circe.syntax.*
 import org.http4s.HttpRoutes
 import org.http4s.circe.CirceEntityDecoder.*
 import org.http4s.dsl.Http4sDsl
+import diethelper.common.model.Diet
 
 object Diet {
 
@@ -17,13 +18,15 @@ object Diet {
   def getRoutes(redisOperations: RedisOperations[IO]): HttpRoutes[IO] = HttpRoutes.of[IO] {
     case req @ POST -> Root =>
       for {
-        diet <- req.as[List[(String, Double)]]
-        recipes <- DietService.getRecipes(diet.map(_._1), redisOperations)
-        x = diet.zip(recipes).map{ case ((_, factor), r) =>
-          DietService.multiplyRecipe(r, factor)
+        diet <- req.attemptAs[Diet].value
+        res <- diet match {
+          case Left(value) => BadRequest("Cannot deserialize diet.")
+          case Right(diet) => {
+            val scaledRecipes = diet.map(DietService.multiplyRecipe)
+            val shoppingList = DietService.createShoppingList(scaledRecipes)
+            Ok(shoppingList.asJson.noSpaces)
+          }
         }
-        shoppingList = DietService.createShoppingList(x)
-        res <- Ok(shoppingList.asJson.noSpaces)
       } yield res
   }
 } 
