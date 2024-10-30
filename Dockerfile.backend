@@ -1,0 +1,18 @@
+FROM sbtscala/scala-sbt:eclipse-temurin-alpine-17.0.10_7_1.10.3_3.5.2 AS build
+
+WORKDIR /src
+COPY . /src/
+
+RUN sbt 'backend/clean;backend/assembly'
+
+FROM azul/zulu-openjdk-alpine:17
+
+# Copy the fat jar into the docker container
+COPY --from=build "/src/backend/target/scala-3.5.2/app.jar" "/app/app.jar"
+
+# Allow external access to the port that the web service will be running on inside the container
+# EXPOSE $PORT
+
+#WORKDIR "/app"
+
+ENTRYPOINT [ "java", "-jar", "/app/app.jar" ]

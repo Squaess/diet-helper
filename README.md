@@ -10,14 +10,10 @@
 
 ## TODO
 
-* error handling - not found responses 
+* refactor
+* cleanup the root directory
+* docker-compose bot rebuild every time
 * unit-tests
-* why i see always 404? cors / cross s????
-* budowanie listy:
-  * wyebiranie przepisów
-  * dodawanie na x dni
-  * modyfikowanie kaloryczności
-* make sure tha domain is serializable to json (include that in common project)
 
 ### Usage
 

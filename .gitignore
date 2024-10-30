@@ -39,3 +39,5 @@ data/*
 
 # Node / Vite
 node_modules
+
+frontend/dist

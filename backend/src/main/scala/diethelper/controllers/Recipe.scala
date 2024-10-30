@@ -1,7 +1,7 @@
 package diethelper.controllers
 
 import cats.effect.IO
-import cats.implicits._
+import cats.implicits.*
 import diethelper.common.model.Recipe
 import diethelper.services.RedisOperations
 import io.circe.generic.auto.*
