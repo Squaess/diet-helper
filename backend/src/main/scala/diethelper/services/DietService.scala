@@ -1,6 +1,5 @@
 package diethelper.services
 
-import cats.effect.IO
 import cats.effect.Sync
 import cats.implicits.*
 import diethelper.common.model.ListCategory

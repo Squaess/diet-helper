@@ -1,18 +1,20 @@
 package diethelper
 
-import cats.effect.*
-import com.comcast.ip4s.*
+import cats.effect._
+import com.comcast.ip4s._
 import diethelper.controllers.Diet
 import diethelper.controllers.Product
 import diethelper.controllers.Recipe
 import diethelper.services.RedisOperations
 import diethelper.services.RedisOperationsImpl
-import org.http4s.ember.server.*
+import org.http4s.ember.server._
 import org.http4s.server.Router
-import org.typelevel.log4cats.slf4j.loggerFactoryforSync
+import org.typelevel.log4cats.LoggerFactory
+import org.typelevel.log4cats.slf4j.Slf4jFactory
 
-object Main extends IOApp.Simple:
+object Main extends IOApp {
 
+  implicit val loggerFactory: LoggerFactory[IO] = Slf4jFactory.create[IO]
   lazy val redisResource = RedisClientSetup.createRedisResource[IO]
 
   def httpApp(redisOps: RedisOperations[IO]) =
@@ -22,8 +24,8 @@ object Main extends IOApp.Simple:
       "/diet" -> Diet.getRoutes(redisOps)
     ).orNotFound
 
-  val server = for {
-    redis <- redisResource
+  def server(config: AppConfig) = for {
+    redis <- redisResource(config.redis)
     redisOps = new RedisOperationsImpl(redis)
     server <- EmberServerBuilder
       .default[IO]
@@ -33,5 +35,8 @@ object Main extends IOApp.Simple:
       .build
   } yield server
 
-  override def run: IO[Unit] =
-    server.use(_ => IO.never)
+  def run(args: List[String]): IO[ExitCode] =
+    AppConfig.load.flatMap { conf =>
+      server(conf).use(_ => IO.never)
+    }
+}

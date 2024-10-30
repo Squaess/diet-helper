@@ -10,14 +10,14 @@ val http4s = Seq(
 ).map(_ % Versions.http4sVersion)
 
 val logging = Seq(
-  "ch.qos.logback" % "logback-classic" % "1.5.3",
-  "org.typelevel" %% "log4cats-slf4j" % "2.6.0" // Direct Slf4j Support - Recommended
+  // "ch.qos.logback" % "logback-classic" % "1.5.3",
+  "org.typelevel" %% "log4cats-slf4j" % Versions.log4catsVersion // Direct Slf4j Support - Recommended
 )
 
-val tests = Seq(
-  "org.scalameta" %% "munit" % "0.7.29" % Test,
-  "org.typelevel" %% "munit-cats-effect" % Versions.catsTestVersion % Test
-)
+// val tests = Seq(
+//   "org.scalameta" %% "munit" % "0.7.29" % Test,
+//   "org.typelevel" %% "munit-cats-effect" % Versions.catsTestVersion % Test
+// )
 
 lazy val common = crossProject(JSPlatform, JVMPlatform)
   .crossType(CrossType.Pure)
@@ -33,9 +33,18 @@ lazy val common = crossProject(JSPlatform, JVMPlatform)
 
 lazy val backend = (project in file("backend"))
   .settings(
-    libraryDependencies ++=  http4s ++ logging ++ tests,
+    libraryDependencies ++= http4s ++ logging,
+    libraryDependencies += "com.github.pureconfig" %% "pureconfig-core" % Versions.pureConfigVersion,
+    libraryDependencies += "com.github.pureconfig" %% "pureconfig-cats-effect" % Versions.pureConfigVersion,
     libraryDependencies += "dev.profunktor" %% "redis4cats-effects" % Versions.redis4catsVersion,
-    libraryDependencies += "org.typelevel" %% "cats-effect" % Versions.catsVersion
+
+    assembly / mainClass := Some("diethelper.Main"),
+    assembly / assemblyJarName := "app.jar",
+    // Assembly settings
+    assembly / assemblyMergeStrategy := {
+      case PathList("META-INF", xs @ _*) => MergeStrategy.discard
+      case x                             => MergeStrategy.first
+    }
   )
   .dependsOn(common.jvm)
 

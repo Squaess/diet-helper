@@ -1,25 +1,16 @@
 package diethelper.services
 
-import cats.effect.IO
 import cats.effect.Sync
 import cats.implicits.*
-// import cats.syntax.all._
-import dev.profunktor.redis4cats.Redis
-import dev.profunktor.redis4cats.connection.RedisClient
-import dev.profunktor.redis4cats.data.RedisCodec
-import dev.profunktor.redis4cats.effect.Log.Stdout.given
 import dev.profunktor.redis4cats.effects.ScanArgs
 import diethelper.domain.db.RedisDocument
 import io.circe.Decoder
 import io.circe.Encoder
 import io.circe.parser.decode
-import io.circe.syntax._
-import org.typelevel.log4cats.Logger
-import org.typelevel.log4cats.slf4j.Slf4jLogger
-import org.typelevel.log4cats.syntax._
+import io.circe.syntax.*
+import org.typelevel.log4cats.syntax.*
 import dev.profunktor.redis4cats.data.KeyScanCursor
 import dev.profunktor.redis4cats.RedisCommands
-import cats.Applicative
 
 trait RedisOperations[F[_]] {
 

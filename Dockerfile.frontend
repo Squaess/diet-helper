@@ -1,0 +1,30 @@
+# Step 1: Build the application
+FROM sbtscala/scala-sbt:eclipse-temurin-jammy-17.0.10_7_1.10.3_3.5.2 AS build
+
+# installs nvm (Node Version Manager)
+ENV NODE_VERSION=22.11.0
+ENV NVM_DIR="/root/.nvm"
+RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.0/install.sh | bash
+# RUN . "$NVM_DIR/nvm.sh" && npm --version
+
+ENV PATH="/root/.nvm/versions/node/v${NODE_VERSION}/bin/:${PATH}"
+
+WORKDIR /src
+COPY . .
+RUN sbt frontend/fullLinkJS
+
+WORKDIR /src/frontend
+RUN npm ci
+RUN npm run build
+
+FROM node:22-alpine AS serve
+WORKDIR /app
+
+COPY --from=build /src/frontend/dist /app/dist
+COPY --from=build /src/frontend/package*.json /app/
+
+# Install only the necessary production dependencies, including Vite
+RUN npm i vite
+
+# What about ENTRYPOINT?
+CMD ["npm", "run", "preview"] 
