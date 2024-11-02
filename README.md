@@ -20,8 +20,7 @@ Frontend is using scalaJS with laminar.
 ## TODO
 
 * refactor
-* cleanup the root directory
-* docker-compose bot rebuild every time
+* docker-compose not rebuild every time
 * unit-tests
 
 ### Usage

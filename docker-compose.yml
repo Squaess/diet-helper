@@ -1,10 +1,7 @@
-version: "3.0"
 services:
   redis:
     restart: always
     image: redis:7.2.4
-    ports:
-      - "6379:6379"
     environment:
       - DEBUG=false
     volumes:
@@ -15,11 +12,16 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.backend
-    ports:
-      - "8080:8080"
     environment:
       - REDIS_HOST=redis
       - REDIS_PORT=6379
+    expose:
+      - 8080
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.backend.rule=Host(`frontend.localhost`) && PathPrefix(`/api`)
+      - traefik.http.middlewares.backend-stripprefix.stripprefix.prefixes=/api
+      - traefik.http.routers.backend.middlewares=backend-stripprefix@docker
     depends_on:
       - redis
   
@@ -27,7 +29,22 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.frontend
-    ports:
-      - "4173:4173"
+    expose:
+      - 4173
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.frontend.rule=Host(`frontend.localhost`)
+      - traefik.http.routers.frontend.entrypoints=web
     depends_on:
       - backend
+      - traefik
+
+  traefik:
+    image: traefik:v3.2
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8080:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./traefik.yaml:/etc/traefik/traefik.yaml:ro

@@ -45,7 +45,7 @@ object RecipeView {
     button(
       "🗘",
       onClick.preventDefault.flatMap(_ =>
-        FetchStream.get(s"http://${Config.backendHost}:${Config.backendPort}/recipe")
+        FetchStream.get(s"api/recipe")
       ) --> { responseText =>
         decode[RecipeList](responseText) match
           case Left(value)  => dom.window.alert(value.getMessage())
@@ -111,7 +111,7 @@ object RecipeView {
         "Generate",
         onClick.preventDefault.flatMap { _ =>
           FetchStream.post(
-            s"http://${Config.backendHost}:${Config.backendPort}/diet",
+            s"api/diet",
             _.body(dietPlan.now().asJson.noSpaces)
           )
         } --> (response => 
