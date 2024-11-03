@@ -14,8 +14,9 @@ import scala.util.Random
 import io.circe.parser.decode
 import io.circe.syntax.*
 import io.circe.generic.auto.*
+import diethelper.services.ServerApi
 
-object RecipePage {
+class RecipePage(serverApi: ServerApi) {
 
   final class ProductInputID
 
@@ -103,10 +104,11 @@ object RecipePage {
           val recipe = Recipe(reciepName, recipeSteps, recipeProducts, calories)
           recipe
         }.flatMap{ (rec) =>
-          FetchStream.post(
-            "http://localhost:8080/recipe",
-            _.body(rec.asJson.noSpaces)
-          ) 
+          // FetchStream.post(
+          //   "http://localhost:8080/recipe",
+          //   _.body(rec.asJson.noSpaces)
+          // ) 
+          serverApi.postRecipe(rec)
         } --> {responseText => dom.console.log(responseText)}
       )
     )
@@ -144,11 +146,11 @@ object RecipePage {
   }
 
   private def refreshAllProducts = {
-    onClick.flatMap(_ => FetchStream.get("http://localhost:8080/product")) --> {
-      responseText =>
-        decode[ProductList](responseText) match {
-          case Left(value)  => dom.console.log(value.getMessage())
-          case Right(value) => setAllProducts(value)
+    onClick.flatMap(_ => serverApi.getProducts) --> {
+      productList =>
+        productList match {
+          case Nil  => dom.console.log("Unable to retrieve products")
+          case x :: xs => setAllProducts(productList)
         }
     }
   }

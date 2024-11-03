@@ -43,6 +43,10 @@ h1 {
   text-align: center;
 }
 
+#nav-bar li {
+  display: inline;
+}
+
 .logo {
   height: 6em;
   padding: 1.5em;

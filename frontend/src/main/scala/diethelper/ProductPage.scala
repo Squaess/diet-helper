@@ -8,8 +8,9 @@ import org.scalajs.dom
 import io.circe.syntax.*
 import io.circe.generic.auto.*
 import io.circe.parser.decode
+import diethelper.services.ServerApi
 
-object ProductPage {
+class ProductPage(serverApi: ServerApi) {
 
   val allProducts: Var[ProductList] = Var(List.empty)
 
@@ -56,10 +57,11 @@ object ProductPage {
                   .value
                 val productToInsert =
                   MyProduct(name, ListCategory.valueOf(category))
-                FetchStream.post(
-                  "http://localhost:8080/product",
-                  _.body(productToInsert.asJson.noSpaces)
-                )
+                // FetchStream.post(
+                //   "http://localhost:8080/product",
+                //   _.body(productToInsert.asJson.noSpaces)
+                // )
+                serverApi.postProduct(productToInsert)
               } --> { response =>
                 dom.window.alert(response)
               }
@@ -93,11 +95,12 @@ object ProductPage {
             button(
               "🗘",
               onClick.flatMap(_ =>
-                FetchStream.get("http://localhost:8080/product")
+                // FetchStream.get("http://localhost:8080/product")
+                serverApi.getProducts
               ) --> { responseText =>
-                decode[ProductList](responseText) match
-                  case Left(value)  => dom.window.alert(value.getMessage())
-                  case Right(value) => setAllProducts(value)
+                responseText match
+                  case Nil  => dom.window.alert("Couldn't retrieve products.")
+                  case x :: xs => setAllProducts(responseText)
               }
             )
           )
@@ -114,7 +117,8 @@ object ProductPage {
         button(
           "❌",
           onClick.flatMap(_ =>
-            FetchStream.apply(_.DELETE, s"http://localhost:8080/product/$name")
+            // FetchStream.apply(_.DELETE, s"http://localhost:8080/product/$name")
+            serverApi.deleteProduct(name)
           ) --> { response =>
             dom.window.alert(response)
             deleteFromAllProducts(name)
