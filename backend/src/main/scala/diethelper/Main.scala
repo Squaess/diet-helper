@@ -11,27 +11,29 @@ import org.http4s.ember.server._
 import org.http4s.server.Router
 import org.typelevel.log4cats.LoggerFactory
 import org.typelevel.log4cats.slf4j.Slf4jFactory
+import diethelper.services.RecipeService
 
 object Main extends IOApp {
 
   implicit val loggerFactory: LoggerFactory[IO] = Slf4jFactory.create[IO]
   lazy val redisResource = RedisClientSetup.createRedisResource[IO]
 
-  def httpApp(redisOps: RedisOperations[IO]) =
+  def httpApp(redisOps: RedisOperations[IO], recipeService: RecipeService[IO]) =
     Router(
       "/product" -> Product.getRoutes(redisOps),
-      "/recipe" -> Recipe.getRoutes(redisOps),
+      "/recipe" -> Recipe.getRoutes(recipeService),
       "/diet" -> Diet.getRoutes(redisOps)
     ).orNotFound
 
   def server(config: AppConfig) = for {
     redis <- redisResource(config.redis)
     redisOps = new RedisOperationsImpl(redis)
+    recipeService = new RecipeService(redisOps)
     server <- EmberServerBuilder
       .default[IO]
       .withHost(ipv4"0.0.0.0")
       .withPort(port"8080")
-      .withHttpApp(httpApp(redisOps))
+      .withHttpApp(httpApp(redisOps, recipeService))
       .build
   } yield server
 
