@@ -9,8 +9,9 @@ import io.circe.syntax.*
 import org.scalajs.dom
 import org.scalajs.dom.HTMLElement
 import diethelper.common.model.ShoppingList
+import diethelper.services.ServerApi
 
-object RecipeView {
+class RecipeView(serverApi: ServerApi) {
 
   private type Diet = List[(Recipe, Double)]
 
@@ -45,7 +46,8 @@ object RecipeView {
     button(
       "🗘",
       onClick.preventDefault.flatMap(_ =>
-        FetchStream.get(s"http://${Config.backendHost}:${Config.backendPort}/recipe")
+        // FetchStream.get(s"api/recipe")
+        serverApi.getRecipes
       ) --> { responseText =>
         decode[RecipeList](responseText) match
           case Left(value)  => dom.window.alert(value.getMessage())
@@ -110,10 +112,11 @@ object RecipeView {
       button(
         "Generate",
         onClick.preventDefault.flatMap { _ =>
-          FetchStream.post(
-            s"http://${Config.backendHost}:${Config.backendPort}/diet",
-            _.body(dietPlan.now().asJson.noSpaces)
-          )
+          // FetchStream.post(
+          //   s"api/diet",
+          //   _.body(dietPlan.now().asJson.noSpaces)
+          // )
+          serverApi.postDiet(dietPlan.now()) 
         } --> (response => 
           decode[ShoppingList](response) match
             case Left(value) => dom.window.alert("Something went wrong. Please contact some1 :)")
